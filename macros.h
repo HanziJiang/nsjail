@@ -36,6 +36,17 @@
 	}))
 #endif /* !defined(TEMP_FAILURE_RETRY) */
 
+#if !defined(RETRY_ON_EBUSY)
+#define RETRY_ON_EBUSY(expression)                                                                 \
+	(__extension__({                                                                           \
+		long int __result;                                                                 \
+		int __retries = 0;                                                                 \
+		do __result = (long int)(expression);                                              \
+		while (__result == -1L && errno == EBUSY && __retries++ < 3);                      \
+		__result;                                                                          \
+	}))
+#endif /* !defined(RETRY_ON_EBUSY) */
+
 #if !defined(ARR_SZ)
 #define ARR_SZ(array) (sizeof(array) / sizeof(*array))
 #endif /* !defined(ARR_SZ) */
