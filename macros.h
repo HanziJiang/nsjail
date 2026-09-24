@@ -41,8 +41,10 @@
 	(__extension__({                                                                           \
 		long int __result;                                                                 \
 		int __retries = 0;                                                                 \
-		do __result = (long int)(expression);                                              \
-		while (__result == -1L && errno == EBUSY && __retries++ < 3);                      \
+		while ((__result = (long int)(expression)) == -1L && errno == EBUSY &&             \
+		       __retries++ < 3) {                                                          \
+			usleep(1000);                                                              \
+		}                                                                                  \
 		__result;                                                                          \
 	}))
 #endif /* !defined(RETRY_ON_EBUSY) */
